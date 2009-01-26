@@ -39,6 +39,8 @@ class IrcBot
           handle line
         end
       end
+    rescue Interrupt # ^C
+      puts
     ensure
       @sock.close unless @sock.nil?
     end
@@ -64,12 +66,10 @@ class IrcBot
   def add_user user
     user.sub! /^[@+]/,''
     users << user
-    puts "*** users is now #{users.inspect}"
   end
 
   def del_user user
     users.delete user
-    puts "*** users is now #{users.inspect}"
   end
 
   def RPL_ENDOFMOTD line
@@ -126,13 +126,15 @@ class IrcBot
       if pattern === cmd
         # Figure out what arguments the callback would like
         # and if we have enough or too many arguments
-        case prc.arity
+        nargs = if prc.arity < 0 then ~prc.arity else prc.arity end
+        case nargs
         when 0
-          say prc.call unless args
+          result = prc.call unless args
         else
-          args.split ' ',prc.arity
-          say prc.call(*args)
+          args.split ' ',nargs
+          result = prc.call(*args)
         end
+        say result
       end
     end
   end
@@ -140,7 +142,6 @@ class IrcBot
   # Declares a bot command
   # pattern => string or regex to match the command
   def self.cmd pattern,&b
-    raise ArgumentError, "Optional arguments are not allowed" unless b.arity >= 0
     @@handlers << [pattern,b]
   end
 end

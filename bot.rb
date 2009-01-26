@@ -16,7 +16,7 @@ class Bot < IrcBot
 
 end
 
-bot = Bot::new :server => "irc.cwru.edu", :nick => "GohonaBot",
-               :pass => "suprfsat", :chan => "#tutbot-testing",
+bot = Bot::new :server => "irc.cwru.edu", :nick => "RBot",
+               :pass => "", :chan => "#testing",
                :desc => "Ruby IRC bot"
 bot.run
