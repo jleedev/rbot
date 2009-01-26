@@ -86,9 +86,9 @@ class IrcBot
   def say it
     case it
     when /^\/me (.*)/
-      write :PRIVMSG, "#tutbot-testing :\1ACTION #{$1}\1"
+      write :PRIVMSG, "#{@args[:chan]} :\1ACTION #{$1}\1"
     else
-      write :PRIVMSG, "#tutbot-testing : #{it}"
+      write :PRIVMSG, "#{@args[:chan]} :#{it}"
     end
   end
 
