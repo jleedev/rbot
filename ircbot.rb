@@ -4,8 +4,7 @@ require 'set'
 class IrcBot
 
   CODES = {"376" => :RPL_ENDOFMOTD,
-           "353" => :RPL_NAMREPLY,
-           "366" => :RPL_ENDOFNAMES}
+           "353" => :RPL_NAMREPLY}
 
   @@handlers = []
 
@@ -31,13 +30,9 @@ class IrcBot
       @sock = TCPSocket::new(@args[:server], @args[:port])
       write :NICK,@args[:nick]
       write :USER,(@args[:nick]+" 0 * :bot")
-      loop do
-        select([@sock],nil,nil)[0].each do |s|
-          exit if s.eof?
-          line = s.gets
-          puts "< #{line}"
-          handle line
-        end
+      @sock.each_line do |line|
+        puts "< #{line}"
+        handle line
       end
     rescue Interrupt # ^C
       puts
